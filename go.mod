@@ -1,0 +1,3 @@
+module eric-create/aoc_2023
+
+go 1.21
