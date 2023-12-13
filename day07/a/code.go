@@ -21,10 +21,11 @@ func main() {
 	players = SortPlayers(*players)
 	sum := GetResult(players)
 
-	// for _, player := range *players {
-	// 	player.print()
-	// }
-	// fmt.Println()
+	for _, player := range *players {
+		player.Print()
+	}
+	fmt.Println()
+	fmt.Println(len(*players))
 	fmt.Println(sum)
 }
 
@@ -44,11 +45,14 @@ func SortPlayers(players []*Player) *[]*Player {
 
 		if len(sortedPlayers) == 0 {
 			sortedPlayers = append(sortedPlayers, player)
+
 		} else {
 			for j, sortedPlayer := range sortedPlayers {
+
 				if player.Compare(sortedPlayer) == Lower {
 					sortedPlayers = slices.Insert(sortedPlayers, j, player)
 					break
+
 				} else if j == len(sortedPlayers)-1 {
 					sortedPlayers = append(sortedPlayers, player)
 				}
@@ -96,7 +100,7 @@ func (p *Player) Compare(other *Player) int {
 	return Equals
 }
 
-func (p *Player) print() {
+func (p *Player) Print() {
 	fmt.Println((*p).Combination, (*p).Bid, *((*p).Hand))
 }
 
@@ -143,7 +147,7 @@ func IsFourOfAKind(hand []int, set mapset.Set[int]) bool {
 
 	for _, distinct := range distincts {
 		count := 0
-		for card := range hand {
+		for _, card := range hand {
 			if card == distinct {
 				count++
 			}
