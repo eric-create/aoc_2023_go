@@ -5,10 +5,12 @@ import (
 	"log"
 	"os"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 
 	mapset "github.com/deckarep/golang-set/v2"
+	"golang.org/x/exp/maps"
 )
 
 func main() {
@@ -70,10 +72,9 @@ type Player struct {
 }
 
 func NewPlayer(hand *[]int, bid int) *Player {
-	player := Player{hand, bid, -1}
-	combination := GetCombination(&player)
-	player.Combination = combination
-
+	updatedHand := UseJoker(*hand)
+	combination := GetCombination(updatedHand)
+	player := Player{hand, bid, combination}
 	return &player
 }
 
@@ -114,8 +115,7 @@ const (
 	FiveOfAKind             // 1 distinct
 )
 
-func GetCombination(player *Player) int {
-	hand := *((*player).Hand)
+func GetCombination(hand []int) int {
 	set := mapset.NewSet(hand...)
 
 	switch len(set.ToSlice()) {
@@ -141,38 +141,100 @@ func GetCombination(player *Player) int {
 	panic("No no.")
 }
 
-func IsFourOfAKind(hand []int, set mapset.Set[int]) bool {
-	distincts := set.ToSlice()
-	counts := []int{}
+func DistinctCards(hand []int) *map[int]int {
+	distinctCards := map[int]int{}
 
-	for _, distinct := range distincts {
-		count := 0
-		for _, card := range hand {
-			if card == distinct {
-				count++
-			}
-		}
-		counts = append(counts, count)
+	for _, card := range hand {
+		distinctCards[card]++
 	}
 
-	return slices.Contains(counts, 4)
+	return &distinctCards
+}
+
+func IsFourOfAKind(hand []int, set mapset.Set[int]) bool {
+	distincts := DistinctCards(hand)
+	return slices.Contains[[]int](maps.Values(*distincts), 4)
 }
 
 func IsThreeOfAKind(hand []int, set mapset.Set[int]) bool {
-	distincts := set.ToSlice()
-	counts := []int{}
+	distincts := DistinctCards(hand)
+	return slices.Contains[[]int](maps.Values(*distincts), 3)
+}
 
-	for _, distinct := range distincts {
-		count := 0
-		for _, card := range hand {
-			if card == distinct {
-				count++
-			}
+func UseJoker(hand []int) []int {
+	distincts := DistinctCards(hand)
+	bestCard := BestCard(distincts)
+
+	newHand := []int{}
+
+	for _, card := range hand {
+		if card == 1 {
+			newHand = append(newHand, bestCard)
+		} else {
+			newHand = append(newHand, card)
 		}
-		counts = append(counts, count)
 	}
 
-	return slices.Contains(counts, 3)
+	return newHand
+}
+
+func BestCard(distincts *map[int]int) int {
+	numOfDisticts := len(maps.Keys(*distincts))
+
+	if numOfDisticts == 5 {
+		// If five distinct cards, then the highest card is the best card.
+		keys := maps.Keys(*distincts)
+		sort.Sort(sort.Reverse(sort.IntSlice(keys)))
+		return keys[0]
+
+	} else if numOfDisticts == 1 && (*distincts)[1] == 5 {
+		// If five Jokers, then Ace is the best card.
+		return 14
+
+	} else {
+		mostKey, _ := MostCard(distincts)
+		return mostKey
+	}
+}
+
+func MostCard(distincts *map[int]int) (int, int) {
+	keys, values := HandLists(distincts)
+	index := 0
+
+	// If the most cards of the same symbol are Jokers.
+	if keys[index] == 1 {
+		index++
+	}
+
+	mostKey := keys[index]
+	mostValue := values[index]
+	return mostKey, mostValue
+}
+
+func HandLists(distincts *map[int]int) ([]int, []int) {
+	keys := []int{}
+	values := maps.Values(*distincts)
+
+	sort.Sort(sort.Reverse(sort.IntSlice(values)))
+
+	for _, value := range values {
+		for _, key := range maps.Keys(*distincts) {
+			if (*distincts)[key] == value {
+				keys = append(keys, key)
+			}
+		}
+	}
+
+	return keys, values
+}
+
+func CompareCombination(a, b int) int {
+	if a < b {
+		return Lower
+	} else if a == b {
+		return Equals
+	}
+	return Higher
 }
 
 func GetPlayers(lines []string) *[]*Player {
@@ -203,7 +265,7 @@ func GetHand(handStr string) *[]int {
 			case 'T':
 				hand = append(hand, 10)
 			case 'J':
-				hand = append(hand, 11)
+				hand = append(hand, 1)
 			case 'Q':
 				hand = append(hand, 12)
 			case 'K':
