@@ -2,6 +2,7 @@ package main
 
 import (
 	"eric-create/aoc_2023/utils"
+	"eric-create/aoc_2023/vectors"
 	"fmt"
 	"strconv"
 )
@@ -82,7 +83,7 @@ func NumberStarts(field [][]rune, adjacentNumbers [][2]int) [][2]int {
 }
 
 func NumberStart(field [][]rune, position *[2]int) [2]int {
-	nextPosition := utils.Navigate[rune](field, position, [2]int{-1, 0})
+	nextPosition := utils.Navigate[rune](field, *position, [2]int{-1, 0})
 
 	// The edge of the board was reached.
 	if nextPosition == nil {
@@ -140,7 +141,7 @@ func ParseNumber(field [][]rune, position *[2]int) [][2]int {
 	numbers := [][2]int{*position}
 
 	for {
-		position = utils.Navigate[rune](field, position, [2]int{1, 0})
+		position = utils.Navigate[rune](field, *position, [2]int{1, 0})
 		// The edge of the board was reached.
 		if position == nil {
 			break
@@ -186,7 +187,7 @@ const (
 
 func AllAdjacentNumbers(field [][]rune, symbols [][2]int) [][2]int {
 	allNumbers := [][2]int{}
-	directions := utils.AllDirections()
+	directions := vectors.AllDirections()
 
 	for _, symbol := range symbols {
 		if adjacentNumbers := AdjacentNumbers(field, symbol, directions); adjacentNumbers != nil {
@@ -201,13 +202,13 @@ func AdjacentNumbers(field [][]rune, position [2]int, directions [][2]int) [][2]
 	numbers := [][2]int{}
 
 	for _, direction := range directions {
-		newPosition := utils.Navigate[rune](field, &position, direction)
+		newPosition := utils.Navigate[rune](field, position, direction)
 
 		if newPosition != nil {
 			symbol := field[(*newPosition)[Y]][(*newPosition)[X]]
 
 			if utils.IsNumber(symbol) {
-				numbers = append(numbers, *utils.AddVectors(position, direction))
+				numbers = append(numbers, *vectors.Add(position, direction))
 			}
 		}
 	}

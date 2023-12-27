@@ -35,25 +35,9 @@ func RuneField(lines []string) [][]rune {
 	return field
 }
 
-func AddVectors(a [2]int, b [2]int) *[2]int {
-	newVector := [2]int{a[0] + b[0], a[1] + b[1]}
-	return &newVector
-}
-
-func AllDirections() [][2]int {
-	return [][2]int{
-		{0, -1},  // up
-		{1, -1},  // up-right
-		{1, 0},   // right
-		{1, 1},   // down-right
-		{0, 1},   // down
-		{-1, 1},  // down-left
-		{-1, 0},  // left
-		{-1, -1}, // up-left
-	}
-}
-
-func Navigate[T any](field [][]T, position *[2]int, direction [2]int) *[2]int {
+// Returns `nil` if there is no neighbor in the specified `direction`, that means that an
+// edge of `field` was reached.
+func Navigate[T any](field [][]T, position [2]int, direction [2]int) *[2]int {
 	xMax := len(field[0]) - 1
 	yMax := len(field) - 1
 
@@ -71,6 +55,16 @@ func Navigate[T any](field [][]T, position *[2]int, direction [2]int) *[2]int {
 	}
 
 	return &[2]int{xNew, yNew}
+}
+
+func FieldToSequence[T any](field [][]T) []T {
+	sequence := []T{}
+
+	for y := range field {
+		sequence = append(sequence, field[y]...)
+	}
+
+	return sequence
 }
 
 func UniquePositions(positions [][2]int) [][2]int {
