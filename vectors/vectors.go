@@ -1,5 +1,18 @@
 package vectors
 
+type Vector struct {
+	X int
+	Y int
+}
+
+func (v Vector) Add(other Vector) Vector {
+	new := Vector{
+		X: v.X + other.X,
+		Y: v.Y + other.Y,
+	}
+	return new
+}
+
 // Returns `0`.
 func X() int {
 	return 0
@@ -10,41 +23,41 @@ func Y() int {
 	return 1
 }
 
-func Up() [2]int {
-	return [2]int{0, -1}
+func Up() Vector {
+	return Vector{0, -1}
 }
 
-func RightUp() [2]int {
-	return [2]int{1, -1}
+func RightUp() Vector {
+	return Vector{1, -1}
 }
 
-func Right() [2]int {
-	return [2]int{1, 0}
+func Right() Vector {
+	return Vector{1, 0}
 }
 
-func RightDown() [2]int {
-	return [2]int{1, 1}
+func RightDown() Vector {
+	return Vector{1, 1}
 }
 
-func Down() [2]int {
-	return [2]int{0, 1}
+func Down() Vector {
+	return Vector{0, 1}
 }
 
-func LeftDown() [2]int {
-	return [2]int{-1, 1}
+func LeftDown() Vector {
+	return Vector{-1, 1}
 }
 
-func Left() [2]int {
-	return [2]int{-1, 0}
+func Left() Vector {
+	return Vector{-1, 0}
 }
 
-func LeftUp() [2]int {
-	return [2]int{-1, -1}
+func LeftUp() Vector {
+	return Vector{-1, -1}
 }
 
 // Up, RightUp, Right, RightDown, Down, LeftDown, Left, LeftUp
-func AllDirections() [][2]int {
-	return [][2]int{
+func AllDirections() []Vector {
+	return []Vector{
 		Up(),
 		RightUp(),
 		Right(),
@@ -57,8 +70,8 @@ func AllDirections() [][2]int {
 }
 
 // Up, Right, Down, Left
-func ManhattanDirections() [][2]int {
-	return [][2]int{
+func ManhattanDirections() []Vector {
+	return []Vector{
 		Up(),
 		Right(),
 		Down(),
@@ -67,14 +80,9 @@ func ManhattanDirections() [][2]int {
 }
 
 // Right, Left
-func Horizontal() [][2]int {
-	return [][2]int{
+func Horizontal() []Vector {
+	return []Vector{
 		Right(),
 		Left(),
 	}
-}
-
-func Add(a [2]int, b [2]int) *[2]int {
-	newVector := [2]int{a[0] + b[0], a[1] + b[1]}
-	return &newVector
 }

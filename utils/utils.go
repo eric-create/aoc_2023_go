@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"eric-create/aoc_2023/vectors"
 	"log"
 	"os"
 	"strconv"
@@ -37,24 +38,20 @@ func RuneField(lines []string) [][]rune {
 
 // Returns `nil` if there is no neighbor in the specified `direction`, that means that an
 // edge of `field` was reached.
-func Navigate[T any](field [][]T, position [2]int, direction [2]int) *[2]int {
+func Navigate[T any](field [][]T, position, direction vectors.Vector) *vectors.Vector {
 	xMax := len(field[0]) - 1
 	yMax := len(field) - 1
 
-	xPos := position[0]
-	yPos := position[1]
-
-	xDir := direction[0]
-	yDir := direction[1]
-
-	xNew := xPos + xDir
-	yNew := yPos + yDir
+	xNew := position.X + direction.X
+	yNew := position.Y + direction.Y
 
 	if xNew < 0 || xNew > xMax || yNew < 0 || yNew > yMax {
 		return nil
 	}
 
-	return &[2]int{xNew, yNew}
+	new := vectors.Vector{X: xNew, Y: yNew}
+
+	return &new
 }
 
 func FieldToSequence[T any](field [][]T) []T {
@@ -67,14 +64,14 @@ func FieldToSequence[T any](field [][]T) []T {
 	return sequence
 }
 
-func UniquePositions(positions [][2]int) [][2]int {
-	uniques := [][2]int{}
+func UniquePositions(positions []vectors.Vector) []vectors.Vector {
+	uniques := []vectors.Vector{}
 
 	for _, position := range positions {
 		contains := false
 
 		for _, unique := range uniques {
-			if position[0] == unique[0] && position[1] == unique[1] {
+			if position.X == unique.X && position.Y == unique.Y {
 				contains = true
 				break
 			}

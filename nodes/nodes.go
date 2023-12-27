@@ -8,7 +8,7 @@ import (
 )
 
 type Node struct {
-	Position    [2]int
+	Position    vectors.Vector
 	Symbol      rune
 	Covered     bool
 	Neighbors   [3][3]*Node
@@ -32,20 +32,16 @@ func (n *Node) String() string {
 	return string(n.Symbol)
 }
 
-func (n *Node) SetNeighbor(neighbor *Node, direction [2]int) {
-	x := direction[vectors.X()] + 1
-	y := direction[vectors.Y()] + 1
-	n.Neighbors[y][x] = neighbor
+func (n *Node) SetNeighbor(neighbor *Node, direction vectors.Vector) {
+	n.Neighbors[direction.Y+1][direction.X+1] = neighbor
 }
 
-func (n *Node) GetNeighbor(direction [2]int) *Node {
-	x := direction[vectors.X()] + 1
-	y := direction[vectors.Y()] + 1
-	return n.Neighbors[y][x]
+func (n *Node) GetNeighbor(direction vectors.Vector) *Node {
+	return n.Neighbors[direction.Y+1][direction.X+1]
 }
 
 // Gets all neighbor nodes that actually exist.
-func (n *Node) RealNeighbors(directions [][2]int) []*Node {
+func (n *Node) RealNeighbors(directions []vectors.Vector) []*Node {
 	neighbors := []*Node{}
 
 	for _, direction := range directions {
@@ -65,7 +61,7 @@ func NodeField(runeField [][]rune) [][]*Node {
 
 		for x := range runeField[y] {
 			node := Node{
-				Position: [2]int{x, y},
+				Position: vectors.Vector{X: x, Y: y},
 				Symbol:   runeField[y][x],
 			}
 
@@ -87,9 +83,7 @@ func DetermineNeighbors(field [][]*Node) {
 				neighborPosition := utils.Navigate[*Node](field, node.Position, direction)
 
 				if neighborPosition != nil {
-					neighborX := neighborPosition[vectors.X()]
-					neighborY := neighborPosition[vectors.Y()]
-					neighbor := field[neighborY][neighborX]
+					neighbor := field[neighborPosition.Y][neighborPosition.X]
 					node.SetNeighbor(neighbor, direction)
 				}
 			}
@@ -136,7 +130,7 @@ func SortHorizontallyAscending(sequence []*Node) []*Node {
 
 		} else {
 			for i, sorted := range sortedNodes {
-				if node.Position[vectors.X()] < sorted.Position[vectors.X()] {
+				if node.Position.X < sorted.Position.X {
 					sortedNodes = slices.Insert[[]*Node](sortedNodes, i, node)
 					break
 				} else if i == len(sortedNodes)-1 {

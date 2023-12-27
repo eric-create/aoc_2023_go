@@ -26,8 +26,8 @@ func main() {
 	fmt.Println(sum)
 }
 
-func UniqueNumbers(numbers [][][2]int) [][][2]int {
-	uniques := [][][2]int{numbers[0]}
+func UniqueNumbers(numbers [][]vectors.Vector) [][]vectors.Vector {
+	uniques := [][]vectors.Vector{numbers[0]}
 
 	for _, number := range numbers[1:] {
 
@@ -47,13 +47,13 @@ func UniqueNumbers(numbers [][][2]int) [][][2]int {
 	return uniques
 }
 
-func NumberEquals(a, b [][2]int) bool {
+func NumberEquals(a, b []vectors.Vector) bool {
 	if len(a) != len(b) {
 		return false
 	}
 
 	for i := range a {
-		if a[i][X] != b[i][X] || a[i][Y] != b[i][Y] {
+		if a[i].X != b[i].X || a[i].Y != b[i].Y {
 			return false
 		}
 	}
@@ -61,8 +61,8 @@ func NumberEquals(a, b [][2]int) bool {
 	return true
 }
 
-func AllPositions(structure [][][2]int) [][2]int {
-	flattened := [][2]int{}
+func AllPositions(structure [][]vectors.Vector) []vectors.Vector {
+	flattened := []vectors.Vector{}
 
 	for i := range structure {
 		flattened = append(flattened, structure[i]...)
@@ -71,8 +71,8 @@ func AllPositions(structure [][][2]int) [][2]int {
 	return flattened
 }
 
-func NumberStarts(field [][]rune, adjacentNumbers [][2]int) [][2]int {
-	allNumbers := [][2]int{}
+func NumberStarts(field [][]rune, adjacentNumbers []vectors.Vector) []vectors.Vector {
+	allNumbers := []vectors.Vector{}
 
 	for _, adjacentNumber := range adjacentNumbers {
 		numberStart := NumberStart(field, &adjacentNumber)
@@ -82,15 +82,15 @@ func NumberStarts(field [][]rune, adjacentNumbers [][2]int) [][2]int {
 	return allNumbers
 }
 
-func NumberStart(field [][]rune, position *[2]int) [2]int {
-	nextPosition := utils.Navigate[rune](field, *position, [2]int{-1, 0})
+func NumberStart(field [][]rune, position *vectors.Vector) vectors.Vector {
+	nextPosition := utils.Navigate[rune](field, *position, vectors.Vector{X: -1, Y: 0})
 
 	// The edge of the board was reached.
 	if nextPosition == nil {
 		return *position
 	}
 
-	char := field[(*nextPosition)[Y]][(*nextPosition)[X]]
+	char := field[(*nextPosition).Y][(*nextPosition).X]
 	if !utils.IsNumber(char) {
 		return *position
 	}
@@ -98,7 +98,7 @@ func NumberStart(field [][]rune, position *[2]int) [2]int {
 	return NumberStart(field, nextPosition)
 }
 
-func Numbers(field [][]rune, numberStarts [][2]int) []int {
+func Numbers(field [][]rune, numberStarts []vectors.Vector) []int {
 	numberInts := []int{}
 	numbers := ParseNumbers(field, numberStarts)
 
@@ -110,11 +110,11 @@ func Numbers(field [][]rune, numberStarts [][2]int) []int {
 	return numberInts
 }
 
-func NumberToInt(field [][]rune, number [][2]int) int {
+func NumberToInt(field [][]rune, number []vectors.Vector) int {
 	characters := []rune{}
 
 	for _, position := range number {
-		characters = append(characters, field[position[Y]][position[X]])
+		characters = append(characters, field[position.Y][position.X])
 	}
 
 	word := ""
@@ -126,8 +126,8 @@ func NumberToInt(field [][]rune, number [][2]int) int {
 	return integer
 }
 
-func ParseNumbers(field [][]rune, numberStarts [][2]int) [][][2]int {
-	numbers := [][][2]int{}
+func ParseNumbers(field [][]rune, numberStarts []vectors.Vector) [][]vectors.Vector {
+	numbers := [][]vectors.Vector{}
 
 	for _, numberStart := range numberStarts {
 		number := ParseNumber(field, &numberStart)
@@ -137,17 +137,17 @@ func ParseNumbers(field [][]rune, numberStarts [][2]int) [][][2]int {
 	return numbers
 }
 
-func ParseNumber(field [][]rune, position *[2]int) [][2]int {
-	numbers := [][2]int{*position}
+func ParseNumber(field [][]rune, position *vectors.Vector) []vectors.Vector {
+	numbers := []vectors.Vector{*position}
 
 	for {
-		position = utils.Navigate[rune](field, *position, [2]int{1, 0})
+		position = utils.Navigate[rune](field, *position, vectors.Vector{X: 1, Y: 0})
 		// The edge of the board was reached.
 		if position == nil {
 			break
 		}
 
-		char := field[(*position)[Y]][(*position)[X]]
+		char := field[(*position).Y][(*position).X]
 		if !utils.IsNumber(char) {
 			break
 		}
@@ -158,13 +158,13 @@ func ParseNumber(field [][]rune, position *[2]int) [][2]int {
 	return numbers
 }
 
-func PrintField(field [][]rune, positions [][2]int) {
+func PrintField(field [][]rune, positions []vectors.Vector) {
 	for y := range field {
 		for x := range field[y] {
 			matches := false
 
 			for _, position := range positions {
-				if position[X] == x && position[Y] == y {
+				if position.X == x && position.Y == y {
 					matches = true
 					break
 				}
@@ -185,8 +185,8 @@ const (
 	Y = 1
 )
 
-func AllAdjacentNumbers(field [][]rune, symbols [][2]int) [][2]int {
-	allNumbers := [][2]int{}
+func AllAdjacentNumbers(field [][]rune, symbols []vectors.Vector) []vectors.Vector {
+	allNumbers := []vectors.Vector{}
 	directions := vectors.AllDirections()
 
 	for _, symbol := range symbols {
@@ -198,17 +198,17 @@ func AllAdjacentNumbers(field [][]rune, symbols [][2]int) [][2]int {
 	return allNumbers
 }
 
-func AdjacentNumbers(field [][]rune, position [2]int, directions [][2]int) [][2]int {
-	numbers := [][2]int{}
+func AdjacentNumbers(field [][]rune, position vectors.Vector, directions []vectors.Vector) []vectors.Vector {
+	numbers := []vectors.Vector{}
 
 	for _, direction := range directions {
 		newPosition := utils.Navigate[rune](field, position, direction)
 
 		if newPosition != nil {
-			symbol := field[(*newPosition)[Y]][(*newPosition)[X]]
+			symbol := field[(*newPosition).Y][(*newPosition).X]
 
 			if utils.IsNumber(symbol) {
-				numbers = append(numbers, *vectors.Add(position, direction))
+				numbers = append(numbers, position.Add(direction))
 			}
 		}
 	}
@@ -216,15 +216,15 @@ func AdjacentNumbers(field [][]rune, position [2]int, directions [][2]int) [][2]
 	return numbers
 }
 
-func SymbolLocations(field [][]rune) [][2]int {
-	locations := [][2]int{}
+func SymbolLocations(field [][]rune) []vectors.Vector {
+	locations := []vectors.Vector{}
 
 	for y := range field {
 		for x := range field[y] {
 			if utils.IsNumber(field[y][x]) || field[y][x] == '.' {
 				continue
 			} else {
-				locations = append(locations, [2]int{x, y})
+				locations = append(locations, vectors.Vector{X: x, Y: y})
 			}
 		}
 	}
