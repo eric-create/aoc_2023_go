@@ -5,21 +5,27 @@ import (
 	"eric-create/aoc_2023/utils"
 	"eric-create/aoc_2023/vectors"
 	"fmt"
+	"strconv"
 )
 
 func main() {
 	lines := utils.ReadLines("input.txt")
 	field := nodes.NodeField(utils.RuneField(lines))
-	nodes.PrintNodeField(field, []*nodes.Node{})
+	// nodes.PrintNodeField(field, []*nodes.Node{})
 	fmt.Println()
 	symbols := FindSymbols(field)
-	nodes.PrintNodeField(field, symbols)
+	// nodes.PrintNodeField(field, symbols)
 	fmt.Println()
 	numbers := AllNumbers(symbols)
 
+	sum := 0
+
 	for _, number := range numbers {
-		fmt.Println(nodes.SequenceToString(number))
+		n, _ := strconv.Atoi(nodes.SequenceToString(number))
+		sum += n
 	}
+
+	fmt.Println(sum)
 }
 
 func FindSymbols(field [][]*nodes.Node) []*nodes.Node {
@@ -50,10 +56,11 @@ func AdjacentNumbers(start *nodes.Node) [][]*nodes.Node {
 	numbers := [][]*nodes.Node{}
 
 	for _, neighbor := range start.RealNeighbors(vectors.AllDirections()) {
-		if neighbor.IsNumber() {
+		if neighbor.IsNumber() && !neighbor.Covered {
 			neighbor.SetCovered()
 			number := []*nodes.Node{neighbor}
 			TrackNumber(neighbor, &number)
+			number = nodes.SortHorizontallyAscending(number)
 			numbers = append(numbers, number)
 		}
 	}
@@ -67,8 +74,6 @@ func TrackNumber(current *nodes.Node, number *[]*nodes.Node) {
 			neighbor.SetCovered()
 			*number = append(*number, neighbor)
 			TrackNumber(neighbor, number)
-		} else {
-			return
 		}
 	}
 }

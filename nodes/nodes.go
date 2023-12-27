@@ -126,3 +126,25 @@ func SequenceToString(sequence []*Node) string {
 
 	return word
 }
+
+func SortHorizontallyAscending(sequence []*Node) []*Node {
+	sortedNodes := []*Node{}
+
+	for _, node := range sequence {
+		if len(sortedNodes) == 0 {
+			sortedNodes = append(sortedNodes, node)
+
+		} else {
+			for i, sorted := range sortedNodes {
+				if node.Position[vectors.X()] < sorted.Position[vectors.X()] {
+					sortedNodes = slices.Insert[[]*Node](sortedNodes, i, node)
+					break
+				} else if i == len(sortedNodes)-1 {
+					sortedNodes = append(sortedNodes, node)
+				}
+			}
+		}
+	}
+
+	return sortedNodes
+}
