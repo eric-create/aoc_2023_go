@@ -16,16 +16,25 @@ func main() {
 	symbols := FindSymbols(field)
 	// nodes.PrintNodeField(field, symbols)
 	fmt.Println()
-	numbers := AllNumbers(symbols)
+	numbers, gears := AllNumbers(symbols)
 
 	sum := 0
-
 	for _, number := range numbers {
 		n, _ := strconv.Atoi(nodes.SequenceToString(number))
 		sum += n
 	}
 
-	fmt.Println(sum)
+	fmt.Println("a", sum)
+
+	sum = 0
+	for _, gear := range gears {
+		if gear[0] != nil && gear[1] != nil {
+			gear0, _ := strconv.Atoi(nodes.SequenceToString(gear[0]))
+			gear1, _ := strconv.Atoi(nodes.SequenceToString(gear[1]))
+			sum += gear0 * gear1
+		}
+	}
+	fmt.Println("b", sum)
 }
 
 func FindSymbols(field [][]*nodes.Node) []*nodes.Node {
@@ -41,19 +50,22 @@ func FindSymbols(field [][]*nodes.Node) []*nodes.Node {
 	return symbols
 }
 
-func AllNumbers(symbols []*nodes.Node) [][]*nodes.Node {
+func AllNumbers(symbols []*nodes.Node) ([][]*nodes.Node, [][2][]*nodes.Node) {
 	allNumbers := [][]*nodes.Node{}
+	gears := [][2][]*nodes.Node{}
 
 	for _, symbol := range symbols {
-		adjacentNumbers := AdjacentNumbers(symbol)
+		adjacentNumbers, gear := AdjacentNumbers(symbol)
 		allNumbers = append(allNumbers, adjacentNumbers...)
+		gears = append(gears, gear)
 	}
 
-	return allNumbers
+	return allNumbers, gears
 }
 
-func AdjacentNumbers(start *nodes.Node) [][]*nodes.Node {
+func AdjacentNumbers(start *nodes.Node) ([][]*nodes.Node, [2][]*nodes.Node) {
 	numbers := [][]*nodes.Node{}
+	gear := [2][]*nodes.Node{}
 
 	for _, neighbor := range start.RealNeighbors(vectors.AllDirections()) {
 		if neighbor.IsNumber() && !neighbor.Covered {
@@ -65,7 +77,11 @@ func AdjacentNumbers(start *nodes.Node) [][]*nodes.Node {
 		}
 	}
 
-	return numbers
+	if len(numbers) == 2 {
+		gear = [2][]*nodes.Node{numbers[0], numbers[1]}
+	}
+
+	return numbers, gear
 }
 
 func TrackNumber(current *nodes.Node, number *[]*nodes.Node) {
