@@ -37,8 +37,10 @@ func LineToNumbers(line string) []int {
 	parts := strings.Split(line, " ")
 
 	for _, part := range parts {
-		number, _ := strconv.Atoi(part)
-		numbers = append(numbers, number)
+		if part != "" {
+			number, _ := strconv.Atoi(part)
+			numbers = append(numbers, number)
+		}
 	}
 
 	return numbers
