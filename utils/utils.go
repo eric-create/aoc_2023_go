@@ -16,6 +16,34 @@ func ReadLines(path string) []string {
 	return strings.Split(string(content), "\n")
 }
 
+func SplitParagraphs(lines []string) [][]string {
+	paragraphs := [][]string{{}}
+	i := 0
+
+	for _, line := range lines {
+		if line != "" {
+			paragraphs[i] = append(paragraphs[i], line)
+		} else {
+			paragraphs = append(paragraphs, []string{})
+			i++
+		}
+	}
+
+	return paragraphs
+}
+
+func LineToNumbers(line string) []int {
+	numbers := []int{}
+	parts := strings.Split(line, " ")
+
+	for _, part := range parts {
+		number, _ := strconv.Atoi(part)
+		numbers = append(numbers, number)
+	}
+
+	return numbers
+}
+
 func IsNumber(r rune) bool {
 	if _, err := strconv.Atoi(string(r)); err != nil {
 		return false
