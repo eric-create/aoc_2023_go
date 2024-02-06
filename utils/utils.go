@@ -16,6 +16,7 @@ func ReadLines(path string) []string {
 	return strings.Split(string(content), "\n")
 }
 
+// Splits a multiline string by lines that are empty.
 func SplitParagraphs(lines []string) [][]string {
 	paragraphs := [][]string{{}}
 	i := 0
@@ -32,6 +33,8 @@ func SplitParagraphs(lines []string) [][]string {
 	return paragraphs
 }
 
+// Splits a string that consists of a single line that only contains numbers and white
+// spaces by the white spaces and returns the numbers.
 func LineToNumbers(line string) []int {
 	numbers := []int{}
 	parts := strings.Split(line, " ")
