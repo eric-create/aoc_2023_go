@@ -49,20 +49,27 @@ func LineToNumbers(line string) []int {
 	return numbers
 }
 
-func IsNumber(r rune) bool {
+func StringIsNumber(s string) bool {
+	if _, err := strconv.Atoi(s); err != nil {
+		return false
+	}
+	return true
+}
+
+func RuneIsNumber(r rune) bool {
 	if _, err := strconv.Atoi(string(r)); err != nil {
 		return false
 	}
 	return true
 }
 
-func RuneField(lines []string) [][]rune {
-	field := [][]rune{}
+func StringsField(lines []string) [][]string {
+	field := [][]string{}
 
 	for y, line := range lines {
-		field = append(field, []rune{})
+		field = append(field, []string{})
 		for _, char := range line {
-			field[y] = append(field[y], char)
+			field[y] = append(field[y], string(char))
 		}
 	}
 

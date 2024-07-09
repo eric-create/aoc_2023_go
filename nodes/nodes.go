@@ -9,18 +9,18 @@ import (
 
 type Node struct {
 	Position    vectors.Vector
-	Symbol      rune
+	Symbol      string
 	Covered     bool
 	Neighbors   [3][3]*Node
 	Connections []*Node
 }
 
 func (n *Node) IsSymbol() bool {
-	return n.Symbol != '.'
+	return n.Symbol != "."
 }
 
 func (n *Node) IsNumber() bool {
-	return utils.IsNumber(n.Symbol)
+	return utils.StringIsNumber(n.Symbol)
 }
 
 // Sets the attribute `Covered` to `true`.
@@ -53,16 +53,16 @@ func (n *Node) RealNeighbors(directions []vectors.Vector) []*Node {
 	return neighbors
 }
 
-func NodeField(runeField [][]rune) [][]*Node {
+func NodeField(stringsField [][]string) [][]*Node {
 	nodeField := [][]*Node{}
 
-	for y := range runeField {
+	for y := range stringsField {
 		nodeField = append(nodeField, []*Node{})
 
-		for x := range runeField[y] {
+		for x := range stringsField[y] {
 			node := Node{
 				Position: vectors.Vector{X: x, Y: y},
-				Symbol:   runeField[y][x],
+				Symbol:   stringsField[y][x],
 			}
 
 			nodeField[y] = append(nodeField[y], &node)

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	lines := utils.ReadLines("input.txt")
-	field := utils.RuneField(lines)
+	field := utils.StringsField(lines)
 	symbolLocations := SymbolLocations(field)
 	adjacentNumbers := AllAdjacentNumbers(field, symbolLocations)
 	// PrintField(field, adjacentNumbers)
@@ -71,7 +71,7 @@ func AllPositions(structure [][]vectors.Vector) []vectors.Vector {
 	return flattened
 }
 
-func NumberStarts(field [][]rune, adjacentNumbers []vectors.Vector) []vectors.Vector {
+func NumberStarts(field [][]string, adjacentNumbers []vectors.Vector) []vectors.Vector {
 	allNumbers := []vectors.Vector{}
 
 	for _, adjacentNumber := range adjacentNumbers {
@@ -82,8 +82,8 @@ func NumberStarts(field [][]rune, adjacentNumbers []vectors.Vector) []vectors.Ve
 	return allNumbers
 }
 
-func NumberStart(field [][]rune, position *vectors.Vector) vectors.Vector {
-	nextPosition := utils.Navigate[rune](field, *position, vectors.Vector{X: -1, Y: 0})
+func NumberStart(field [][]string, position *vectors.Vector) vectors.Vector {
+	nextPosition := utils.Navigate[string](field, *position, vectors.Vector{X: -1, Y: 0})
 
 	// The edge of the board was reached.
 	if nextPosition == nil {
@@ -91,14 +91,14 @@ func NumberStart(field [][]rune, position *vectors.Vector) vectors.Vector {
 	}
 
 	char := field[(*nextPosition).Y][(*nextPosition).X]
-	if !utils.IsNumber(char) {
+	if !utils.StringIsNumber(char) {
 		return *position
 	}
 
 	return NumberStart(field, nextPosition)
 }
 
-func Numbers(field [][]rune, numberStarts []vectors.Vector) []int {
+func Numbers(field [][]string, numberStarts []vectors.Vector) []int {
 	numberInts := []int{}
 	numbers := ParseNumbers(field, numberStarts)
 
@@ -110,8 +110,8 @@ func Numbers(field [][]rune, numberStarts []vectors.Vector) []int {
 	return numberInts
 }
 
-func NumberToInt(field [][]rune, number []vectors.Vector) int {
-	characters := []rune{}
+func NumberToInt(field [][]string, number []vectors.Vector) int {
+	characters := []string{}
 
 	for _, position := range number {
 		characters = append(characters, field[position.Y][position.X])
@@ -126,7 +126,7 @@ func NumberToInt(field [][]rune, number []vectors.Vector) int {
 	return integer
 }
 
-func ParseNumbers(field [][]rune, numberStarts []vectors.Vector) [][]vectors.Vector {
+func ParseNumbers(field [][]string, numberStarts []vectors.Vector) [][]vectors.Vector {
 	numbers := [][]vectors.Vector{}
 
 	for _, numberStart := range numberStarts {
@@ -137,18 +137,18 @@ func ParseNumbers(field [][]rune, numberStarts []vectors.Vector) [][]vectors.Vec
 	return numbers
 }
 
-func ParseNumber(field [][]rune, position *vectors.Vector) []vectors.Vector {
+func ParseNumber(field [][]string, position *vectors.Vector) []vectors.Vector {
 	numbers := []vectors.Vector{*position}
 
 	for {
-		position = utils.Navigate[rune](field, *position, vectors.Vector{X: 1, Y: 0})
+		position = utils.Navigate[string](field, *position, vectors.Vector{X: 1, Y: 0})
 		// The edge of the board was reached.
 		if position == nil {
 			break
 		}
 
 		char := field[(*position).Y][(*position).X]
-		if !utils.IsNumber(char) {
+		if !utils.StringIsNumber(char) {
 			break
 		}
 
@@ -185,7 +185,7 @@ const (
 	Y = 1
 )
 
-func AllAdjacentNumbers(field [][]rune, symbols []vectors.Vector) []vectors.Vector {
+func AllAdjacentNumbers(field [][]string, symbols []vectors.Vector) []vectors.Vector {
 	allNumbers := []vectors.Vector{}
 	directions := vectors.AllDirections()
 
@@ -198,16 +198,16 @@ func AllAdjacentNumbers(field [][]rune, symbols []vectors.Vector) []vectors.Vect
 	return allNumbers
 }
 
-func AdjacentNumbers(field [][]rune, position vectors.Vector, directions []vectors.Vector) []vectors.Vector {
+func AdjacentNumbers(field [][]string, position vectors.Vector, directions []vectors.Vector) []vectors.Vector {
 	numbers := []vectors.Vector{}
 
 	for _, direction := range directions {
-		newPosition := utils.Navigate[rune](field, position, direction)
+		newPosition := utils.Navigate[string](field, position, direction)
 
 		if newPosition != nil {
 			symbol := field[(*newPosition).Y][(*newPosition).X]
 
-			if utils.IsNumber(symbol) {
+			if utils.StringIsNumber(symbol) {
 				numbers = append(numbers, position.Add(direction))
 			}
 		}
@@ -216,12 +216,12 @@ func AdjacentNumbers(field [][]rune, position vectors.Vector, directions []vecto
 	return numbers
 }
 
-func SymbolLocations(field [][]rune) []vectors.Vector {
+func SymbolLocations(field [][]string) []vectors.Vector {
 	locations := []vectors.Vector{}
 
 	for y := range field {
 		for x := range field[y] {
-			if utils.IsNumber(field[y][x]) || field[y][x] == '.' {
+			if utils.StringIsNumber(field[y][x]) || field[y][x] == "." {
 				continue
 			} else {
 				locations = append(locations, vectors.Vector{X: x, Y: y})

@@ -10,7 +10,7 @@ import (
 
 func main() {
 	lines := utils.ReadLines("input.txt")
-	field := nodes.NodeField(utils.RuneField(lines))
+	field := nodes.NodeField(utils.StringsField(lines))
 	// nodes.PrintNodeField(field, []*nodes.Node{})
 	fmt.Println()
 	symbols := FindSymbols(field)
