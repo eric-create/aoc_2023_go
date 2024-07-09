@@ -9,7 +9,7 @@ import (
 
 func main() {
 	lines := utils.ReadLines("input.txt")
-	field := utils.StringsField(lines)
+	field := utils.StringField(lines)
 	symbolLocations := SymbolLocations(field)
 	adjacentNumbers := AllAdjacentNumbers(field, symbolLocations)
 	// PrintField(field, adjacentNumbers)

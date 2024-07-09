@@ -86,3 +86,11 @@ func Horizontal() []Vector {
 		Left(),
 	}
 }
+
+// Up, Down
+func Vertical() []Vector {
+	return []Vector{
+		Up(),
+		Down(),
+	}
+}

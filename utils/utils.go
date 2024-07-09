@@ -63,7 +63,7 @@ func RuneIsNumber(r rune) bool {
 	return true
 }
 
-func StringsField(lines []string) [][]string {
+func StringField(lines []string) [][]string {
 	field := [][]string{}
 
 	for y, line := range lines {

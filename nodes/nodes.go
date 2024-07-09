@@ -53,16 +53,16 @@ func (n *Node) RealNeighbors(directions []vectors.Vector) []*Node {
 	return neighbors
 }
 
-func NodeField(stringsField [][]string) [][]*Node {
+func NodeField(stringField [][]string) [][]*Node {
 	nodeField := [][]*Node{}
 
-	for y := range stringsField {
+	for y := range stringField {
 		nodeField = append(nodeField, []*Node{})
 
-		for x := range stringsField[y] {
+		for x := range stringField[y] {
 			node := Node{
 				Position: vectors.Vector{X: x, Y: y},
-				Symbol:   stringsField[y][x],
+				Symbol:   stringField[y][x],
 			}
 
 			nodeField[y] = append(nodeField[y], &node)
@@ -80,7 +80,7 @@ func DetermineNeighbors(field [][]*Node) {
 			node := field[y][x]
 
 			for _, direction := range vectors.AllDirections() {
-				neighborPosition := utils.Navigate[*Node](field, node.Position, direction)
+				neighborPosition := utils.Navigate(field, node.Position, direction)
 
 				if neighborPosition != nil {
 					neighbor := field[neighborPosition.Y][neighborPosition.X]
@@ -91,6 +91,7 @@ func DetermineNeighbors(field [][]*Node) {
 	}
 }
 
+// If `selection` is empty, then prints all nodes.
 func PrintNodeField(field [][]*Node, selection []*Node) {
 	for y := range field {
 		for x := range field[y] {
@@ -100,7 +101,7 @@ func PrintNodeField(field [][]*Node, selection []*Node) {
 				fmt.Print(node.String())
 
 			} else {
-				if slices.Contains[[]*Node](selection, node) {
+				if slices.Contains(selection, node) {
 					fmt.Print(node.String())
 				} else {
 					fmt.Print(".")
@@ -141,4 +142,15 @@ func SortHorizontallyAscending(sequence []*Node) []*Node {
 	}
 
 	return sortedNodes
+}
+
+func Find(field [][]*Node, symbol string) *Node {
+	for _, row := range field {
+		for _, node := range row {
+			if node.Symbol == symbol {
+				return node
+			}
+		}
+	}
+	return nil
 }
